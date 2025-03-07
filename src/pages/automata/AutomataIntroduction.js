@@ -94,7 +94,7 @@ const AutomataIntroduction = () => {
         
         <Paragraph>
           <strong>Non-deterministic Finite Automata (NFA):</strong> An NFA can have multiple possible transitions for the same input symbol
-          and state, or even transitions on the empty string (ε-transitions). The NFA accepts an input if there exists at least
+          and state, or even transitions on the empty string (epsilon-transitions). The NFA accepts an input if there exists at least
           one path through the automaton that leads to an accepting state.
         </Paragraph>
       </ContentSection>

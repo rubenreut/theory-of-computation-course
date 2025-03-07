@@ -102,7 +102,7 @@ const AutomataComparisons = () => {
         <Paragraph>
           DFAs are simpler to understand and implement because at each step there is exactly one possible transition
           for each input symbol. NFAs, on the other hand, can have multiple possible transitions for the same symbol,
-          or even transitions on the empty string (ε-transitions). This non-determinism doesn't give NFAs more power,
+          or even transitions on the empty string (epsilon-transitions). This non-determinism doesn't give NFAs more power,
           but it often allows for more concise representations of certain languages.
         </Paragraph>
       </ContentSection>
@@ -125,7 +125,7 @@ const AutomataComparisons = () => {
               <td>Zero or more</td>
             </tr>
             <tr>
-              <td>ε-transitions</td>
+              <td>Epsilon-transitions</td>
               <td>Not allowed</td>
               <td>Allowed</td>
             </tr>

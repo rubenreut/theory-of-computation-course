@@ -110,7 +110,7 @@ const AutomataCheatSheet = () => {
           <ul>
             <li>Q is a finite set of states</li>
             <li>Σ is a finite set of input symbols (the alphabet)</li>
-            <li>δ: Q × (Σ ∪ {ε}) → P(Q) is the transition function (P(Q) is the power set of Q)</li>
+            <li>δ: Q × (Σ ∪ {"ε"}) → P(Q) is the transition function (P(Q) is the power set of Q)</li>
             <li>q₀ ∈ Q is the initial state</li>
             <li>F ⊆ Q is the set of accepting states</li>
           </ul>
@@ -160,7 +160,7 @@ const AutomataCheatSheet = () => {
             Kleene Star: a*   (matches zero or more a's)
             Parentheses: (a)  (used for grouping)
             One or more: a+   (matches one or more a's, equivalent to aa*)
-            Optional: a?      (matches zero or one a, equivalent to (ε|a))
+            Optional: a?      (matches zero or one a, equivalent to (ε|a) where ε is the empty string)
           </Code>
         </Definition>
         

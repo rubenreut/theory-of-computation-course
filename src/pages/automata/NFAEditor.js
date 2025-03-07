@@ -52,7 +52,7 @@ const NFAEditor = () => {
       <SectionTitle>Non-deterministic Finite Automaton (NFA) Editor</SectionTitle>
       <SectionDescription>
         Create and test your own NFA with this interactive editor. Define states, alphabet, 
-        transitions (including ε-transitions), and test input strings.
+        transitions (including epsilon-transitions), and test input strings.
       </SectionDescription>
       
       <ComingSoonContainer>
@@ -60,7 +60,7 @@ const NFAEditor = () => {
         <ComingSoonText>Coming Soon</ComingSoonText>
         <ComingSoonDescription>
           We're currently working on the NFA Editor. It will include support for multiple transitions 
-          on the same input symbol and ε-transitions. Check back soon!
+          on the same input symbol and epsilon-transitions. Check back soon!
         </ComingSoonDescription>
       </ComingSoonContainer>
     </EditorContainer>
