@@ -181,14 +181,20 @@ const Home = () => {
         </ModuleCard>
         
         <ModuleCard>
-          <ModuleTitle coming={true}>Automata Theory</ModuleTitle>
+          <ModuleTitle>Finite Automata</ModuleTitle>
           <ModuleDescription>
-            Discover finite automata, pushdown automata, and Turing machines.
-            Understand how these abstract machines recognize different classes of languages
-            and their relationship to grammars.
+            Explore Deterministic (DFA) and Non-deterministic (NFA) Finite Automata.
+            Learn how they recognize regular languages and their relationship to regular expressions.
           </ModuleDescription>
           
-          <StartButton as="span" coming={true}>Coming Soon</StartButton>
+          <ModuleLinks>
+            <SectionLink to="/automata/introduction">Introduction</SectionLink>
+            <SectionLink to="/automata/dfa">DFA Editor</SectionLink>
+            <SectionLink to="/automata/nfa">NFA Editor</SectionLink>
+            <SectionLink to="/automata/examples">Examples</SectionLink>
+          </ModuleLinks>
+          
+          <StartButton to="/automata/introduction">Start Learning</StartButton>
         </ModuleCard>
         
         <ModuleCard>

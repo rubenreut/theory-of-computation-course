@@ -152,6 +152,13 @@ function Navbar() {
           >
             Context-Free Grammars
           </StyledLink>
+          <StyledLink 
+            to="/automata" 
+            active={isActive('/automata')}
+            onClick={() => setIsOpen(false)}
+          >
+            Finite Automata
+          </StyledLink>
           {/* Add more links as needed */}
         </NavLinks>
       </NavContent>

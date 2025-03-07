@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Settings from './components/Settings';
 import Home from './pages/Home';
 import CFGModule from './pages/CFGModule';
+import AutomataModule from './pages/AutomataModule';
 import './styles/main.css';
 
 // CSS for entire application
@@ -48,6 +49,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/cfg/*" element={<CFGModule />} />
+            <Route path="/automata/*" element={<AutomataModule />} />
             {/* Add more module routes as the application grows */}
           </Routes>
         </MainContent>
