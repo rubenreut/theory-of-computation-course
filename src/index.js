@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import CFGProvider from './context/CFGContext';
+import SettingsProvider from './context/SettingsContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <CFGProvider>
-      <App />
-    </CFGProvider>
+    <SettingsProvider>
+      <CFGProvider>
+        <App />
+      </CFGProvider>
+    </SettingsProvider>
   </React.StrictMode>
 );

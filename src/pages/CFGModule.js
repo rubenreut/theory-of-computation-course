@@ -12,51 +12,118 @@ import CFGComparisons from './cfg/CFGComparisons';
 import CFGCheatSheet from './cfg/CFGCheatSheet';
 
 const ModuleContainer = styled.div`
-  padding: 20px 0;
+  width: 100%;
 `;
 
 const ModuleHeader = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: var(--spacing-xl);
+  max-width: 800px;
+`;
+
+const ModuleTitle = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-sm);
+  background: linear-gradient(90deg, var(--primary-color), var(--tertiary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
+const ModuleDescription = styled.p`
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+`;
+
+const TabsContainer = styled.div`
+  margin-bottom: var(--spacing-xl);
+  width: 100%;
 `;
 
 const TabsNav = styled.nav`
-  display: flex;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 30px;
-  border: 1px solid #e0e0e0;
+  display: inline-flex;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  padding: 4px;
+  margin-bottom: var(--spacing-xl);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  }
 `;
 
 const TabLink = styled(NavLink)`
-  padding: 12px 20px;
+  padding: 10px 20px;
   text-decoration: none;
-  color: #333;
+  color: var(--text-color);
   font-weight: 500;
-  border-right: 1px solid #e0e0e0;
-  transition: background-color 0.2s ease;
-  
-  &:last-child {
-    border-right: none;
-  }
+  font-size: 0.95rem;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
   
   &:hover {
-    background-color: #e9e9e9;
+    background-color: rgba(0, 0, 0, 0.05);
   }
   
   &.active {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   @media (max-width: 768px) {
-    padding: 10px 12px;
+    padding: 8px 16px;
     font-size: 0.9rem;
   }
+`;
+
+const ContentContainer = styled.div`
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 30px var(--shadow-color);
+  padding: var(--spacing-xxl);
+  margin-bottom: var(--spacing-xxl);
+  border: 1px solid var(--border-color);
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+  font-size: var(--font-size-lg);
   
-  @media (max-width: 576px) {
-    padding: 8px 10px;
-    font-size: 0.8rem;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  & > * {
+    max-width: 100%;
+  }
+  
+  & h2 {
+    font-size: calc(var(--font-size-xxl) + 2px);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  & h3 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+  }
+  
+  & p {
+    margin-bottom: var(--spacing-lg);
+    font-size: var(--font-size-lg);
+  }
+  
+  @media (max-width: 768px) {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-md);
   }
 `;
 
@@ -81,33 +148,39 @@ const CFGModule = () => {
   return (
     <ModuleContainer className="cfg-module">
       <ModuleHeader>
-        <h1>Context-Free Grammars</h1>
-        <p>Learn and practice with Context-Free Grammars through interactive examples and visualizations.</p>
+        <ModuleTitle>Context-Free Grammars</ModuleTitle>
+        <ModuleDescription>
+          Learn and practice with context-free grammars through interactive examples and visualizations. Master the fundamentals of formal language theory.
+        </ModuleDescription>
       </ModuleHeader>
       
-      <TabsNav>
-        <TabLink to="/cfg/introduction">Introduction</TabLink>
-        <TabLink to="/cfg/editor">Grammar Editor</TabLink>
-        <TabLink to="/cfg/examples">Examples</TabLink>
-        <TabLink to="/cfg/comparisons">Comparisons</TabLink>
-        <TabLink to="/cfg/cheatsheet">Cheat Sheet</TabLink>
-      </TabsNav>
-      
-      <Routes>
-        <Route path="/introduction" element={<CFGIntroduction />} />
-        <Route path="/editor" element={
-          <CFGEditor 
-            grammar={grammar} 
-            setGrammar={setGrammar} 
-            inputString={inputString} 
-            setInputString={setInputString}
-            createShareableURL={createShareableURL}
-          />
-        } />
-        <Route path="/examples" element={<CFGExamples />} />
-        <Route path="/comparisons" element={<CFGComparisons />} />
-        <Route path="/cheatsheet" element={<CFGCheatSheet />} />
-      </Routes>
+      <TabsContainer>
+        <TabsNav>
+          <TabLink to="/cfg/introduction">Introduction</TabLink>
+          <TabLink to="/cfg/editor">Grammar Editor</TabLink>
+          <TabLink to="/cfg/examples">Examples</TabLink>
+          <TabLink to="/cfg/comparisons">Comparisons</TabLink>
+          <TabLink to="/cfg/cheatsheet">Cheat Sheet</TabLink>
+        </TabsNav>
+        
+        <ContentContainer>
+          <Routes>
+            <Route path="/introduction" element={<CFGIntroduction />} />
+            <Route path="/editor" element={
+              <CFGEditor 
+                grammar={grammar} 
+                setGrammar={setGrammar} 
+                inputString={inputString} 
+                setInputString={setInputString}
+                createShareableURL={createShareableURL}
+              />
+            } />
+            <Route path="/examples" element={<CFGExamples />} />
+            <Route path="/comparisons" element={<CFGComparisons />} />
+            <Route path="/cheatsheet" element={<CFGCheatSheet />} />
+          </Routes>
+        </ContentContainer>
+      </TabsContainer>
     </ModuleContainer>
   );
 };
