@@ -98,6 +98,7 @@ export const ResetZoomButton = styled(ZoomButton)`
 // Main component
 const AutomataCanvas = ({
   canvasManager,
+  initRef,
   renderFunction,
   isLoading = false,
   variant = 'dfa',
@@ -109,7 +110,7 @@ const AutomataCanvas = ({
 
   // Initialize canvas
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current || !canvasManager) return;
+    if (!canvasRef.current || !containerRef.current) return;
     
     // Only initialize once
     if (!isInitialized) {
@@ -120,6 +121,11 @@ const AutomataCanvas = ({
       // Set canvas dimensions
       canvas.width = rect.width;
       canvas.height = rect.height;
+      
+      // Initialize canvas manager if provided
+      if (initRef) {
+        initRef(canvas);
+      }
       
       setIsInitialized(true);
     }
@@ -133,7 +139,7 @@ const AutomataCanvas = ({
     return () => {
       // Any cleanup needed for the canvas
     };
-  }, [canvasManager, renderFunction, isInitialized]);
+  }, [renderFunction, isInitialized, initRef]);
 
   // Handle window resize
   useEffect(() => {
