@@ -15,7 +15,7 @@ const rotate = keyframes`
 export const CanvasContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 500px; /* Fixed reasonable height */
+  height: 550px; /* Increased height for better visualization */
   margin-bottom: var(--spacing-xl);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
