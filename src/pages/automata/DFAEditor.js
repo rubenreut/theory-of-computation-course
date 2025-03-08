@@ -133,7 +133,7 @@ const DFAEditor = () => {
       onInitialStateChange={handleInitialStateChange}
       onAcceptingStatesChange={handleAcceptingStatesChange}
       testInput={testInput}
-      onTestInputChange={(e) => setTestInput(e.target.value)}
+      onTestInputChange={setTestInput}
       onTestSubmit={handleTestSubmit}
       testResult={testResult}
       transitionsComponent={
@@ -160,7 +160,7 @@ const DFAEditor = () => {
             type="text" 
             id="testInputVis" 
             value={testInput} 
-            onChange={(e) => setTestInput(e.target.value)} 
+            onChange={setTestInput} 
             placeholder={`e.g., ${dfa.alphabet.join('')}${dfa.alphabet[0] || ''}`}
           />
           <Button onClick={handleTestSubmit}>

@@ -170,7 +170,7 @@ const NFAEditor = () => {
       onInitialStateChange={handleInitialStateChange}
       onAcceptingStatesChange={handleAcceptingStatesChange}
       testInput={testInput}
-      onTestInputChange={(e) => setTestInput(e.target.value)}
+      onTestInputChange={setTestInput}
       onTestSubmit={handleTestSubmit}
       testResult={testResult}
       additionalControls={
@@ -209,7 +209,7 @@ const NFAEditor = () => {
             type="text" 
             id="testInputVis" 
             value={testInput} 
-            onChange={(e) => setTestInput(e.target.value)} 
+            onChange={setTestInput} 
             placeholder={`e.g., ${nfa.alphabet.join('')}${nfa.alphabet[0] || ''}`}
             variant="nfa"
           />

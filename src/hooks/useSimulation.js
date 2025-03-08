@@ -514,7 +514,8 @@ const useSimulation = (options = {}) => {
   
   // Handle test input change
   const handleTestInputChange = useCallback((e) => {
-    setTestInput(e.target.value);
+    const newValue = e?.target?.value !== undefined ? e.target.value : e;
+    setTestInput(newValue);
   }, []);
   
   // Handle test input submit
