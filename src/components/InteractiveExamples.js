@@ -118,7 +118,12 @@ function InteractiveExamples() {
           const correctAnswers = ["ab", "aabb", "aaabbb", "aaaabbbb", "aaaaabbbbb"];
           const correctAnswerString = correctAnswers.join(',');
           
-          // Check if the answer contains all correct answers and no incorrect ones
+          // Check against correct answer string for exact match
+          if (answer === correctAnswerString) {
+            return true;
+          }
+          
+          // If not an exact match, check if the answer contains all correct answers and no incorrect ones
           const userAnswers = answer.split(',');
           const allCorrect = userAnswers.every(str => {
             // Check if it matches a^n b^n pattern

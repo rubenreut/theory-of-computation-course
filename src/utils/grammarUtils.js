@@ -134,7 +134,41 @@ export const computeFirstSets = (grammar) => {
           
           // If ε is in First(Y), need to consider what follows Y
           if (first[firstSymbol].has('ε')) {
-            // TODO: Handle more complex cases with multiple non-terminals
+            if (to.length > 1) {
+              // Case with multiple symbols: if Y→ε, add First(rest) to First(X)
+              const restOfProduction = to.slice(1);
+              const nextSymbol = restOfProduction[0];
+              
+              if (grammar.terminals.includes(nextSymbol)) {
+                // If the next symbol is a terminal, add it to First(X)
+                if (!first[from].has(nextSymbol)) {
+                  first[from].add(nextSymbol);
+                  changed = true;
+                }
+              } else if (grammar.nonTerminals.includes(nextSymbol)) {
+                // If the next symbol is a non-terminal, add its First set
+                for (const terminal of first[nextSymbol]) {
+                  if (terminal !== 'ε' && !first[from].has(terminal)) {
+                    first[from].add(terminal);
+                    changed = true;
+                  }
+                }
+                
+                // If all symbols can derive ε, add ε to First(X)
+                if (first[nextSymbol].has('ε') && restOfProduction.length === 1) {
+                  if (!first[from].has('ε')) {
+                    first[from].add('ε');
+                    changed = true;
+                  }
+                }
+              }
+            } else {
+              // If Y is the only symbol and Y→ε, add ε to First(X)
+              if (!first[from].has('ε')) {
+                first[from].add('ε');
+                changed = true;
+              }
+            }
           }
         }
       }

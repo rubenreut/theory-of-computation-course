@@ -247,7 +247,9 @@ Generated with Context-Free Grammar Learning App
   return (
     <CheatSheetContainer>
       <Title>
-        <TitleIcon>📝</TitleIcon>
+        <TitleIcon>
+          <span role="img" aria-label="Notepad">📝</span>
+        </TitleIcon>
         Context-Free Grammars Cheat Sheet
       </Title>
       

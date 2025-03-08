@@ -27,15 +27,6 @@ const Paragraph = styled.p`
   line-height: 1.7;
 `;
 
-const Image = styled.img`
-  width: 100%;
-  max-width: 600px;
-  margin: var(--spacing-lg) auto;
-  display: block;
-  border-radius: var(--border-radius-md);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-`;
-
 const AutomataIntroduction = () => {
   // Content for the introduction
   const introductionText = `
@@ -129,9 +120,28 @@ const AutomataIntroduction = () => {
           <li>F ⊆ Q is the set of accepting states</li>
         </ul>
         
+        {/* Uncomment when images are available
+        <div style={{ textAlign: 'center', margin: 'var(--spacing-lg) 0' }}>
+          <img 
+            src="/assets/dfa-example.png" 
+            alt="Example of a simple DFA that accepts strings ending with 'ab'" 
+            style={{
+              width: '100%',
+              maxWidth: '600px',
+              margin: '0 auto',
+              borderRadius: 'var(--border-radius-md)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+            }}
+          />
+          <div style={{ marginTop: 'var(--spacing-sm)', color: 'var(--text-secondary)' }}>
+            Fig 1: A simple DFA that accepts all strings ending with 'ab'
+          </div>
+        </div>
+        */}
+        
         <Paragraph>
           A non-deterministic finite automaton (NFA) is also a 5-tuple (Q, Σ, δ, q₀, F), but with the transition function
-          defined as δ: Q × (Σ ∪ {ε}) → P(Q), where P(Q) is the power set of Q (set of all subsets of Q).
+          defined as δ: Q × (Σ) → P(Q), where P(Q) is the power set of Q (set of all subsets of Q).
         </Paragraph>
       </ContentSection>
     </IntroductionContainer>

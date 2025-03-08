@@ -3,8 +3,12 @@ import Tooltip from './Tooltip';
 import tooltipDefinitions from '../utils/tooltipDefinitions';
 
 // Helper function to escape HTML special characters
-const escapeHtml = (unsafe) => {
-  return unsafe
+// This is used when we need to render content that might contain HTML characters
+// For example when displaying user-generated content or code examples
+const sanitizeHtml = (content) => {
+  if (typeof content !== 'string') return '';
+  
+  return content
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -36,11 +40,17 @@ function TooltipText({ children, moreInfoCallback }) {
       {parts.map((part, index) => {
         const lowerPart = part.toLowerCase();
         if (terms.includes(lowerPart)) {
+          // Use sanitizeHtml for definition content if needed
+          const definition = tooltipDefinitions[lowerPart];
+          const sanitizedDefinition = definition.includes('<') || definition.includes('>') 
+            ? sanitizeHtml(definition) 
+            : definition;
+            
           return (
             <Tooltip 
               key={index} 
               term={part}
-              definition={tooltipDefinitions[lowerPart]}
+              definition={sanitizedDefinition}
               moreInfoCallback={moreInfoCallback}
             >
               {part}

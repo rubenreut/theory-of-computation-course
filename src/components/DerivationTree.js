@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
 import { getRandomDerivation } from '../utils/grammarUtils';
@@ -82,20 +82,18 @@ function DerivationTree({ grammar }) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   
-  const generateTree = () => {
-    if (!grammar || !grammar.productions || grammar.productions.length === 0) {
-      return;
+  // Helper function to count leaf nodes - memoized to prevent dependency changes on every render
+  const countLeafNodes = useCallback((node) => {
+    if (!node.children || node.children.length === 0) {
+      return 1;
     }
-    
-    // Generate a random derivation tree
-    const maxDepth = 3;
-    const rootNode = getRandomDerivation(grammar, grammar.startSymbol, maxDepth);
-    
-    renderTree(rootNode);
-  };
-  
-  const renderTree = (root) => {
-    if (!svgRef.current || !containerRef.current) return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  return node.children.reduce((sum, child) => sum + countLeafNodes(child), 0);
+  }, []);
+
+  // Define renderTree as a memoized function
+  const renderTree = useCallback((root) => {
+    if (!svgRef.current || !containerRef.current || !root) return;
     
     // Store the root for later use (e.g., for window resize)
     svgRef.current.__data__ = root;
@@ -165,9 +163,9 @@ function DerivationTree({ grammar }) {
       .attr('fill', d => {
         // Non-terminals are blue, terminals are green
         const symbol = d.data.symbol;
-        if (grammar.nonTerminals.includes(symbol)) {
+        if (grammar && grammar.nonTerminals && grammar.nonTerminals.includes(symbol)) {
           return '#4682B4'; // SteelBlue
-        } else if (grammar.terminals.includes(symbol)) {
+        } else if (grammar && grammar.terminals && grammar.terminals.includes(symbol)) {
           return '#66BB6A'; // Green
         } else {
           return '#FFA726'; // Orange (epsilon)
@@ -192,22 +190,27 @@ function DerivationTree({ grammar }) {
       
       svg.call(zoom.transform, initialTransform);
     }
-  };
+  }, [grammar, countLeafNodes]); // Added countLeafNodes dependency
   
-  // Helper function to count leaf nodes
-  const countLeafNodes = (node) => {
-    if (!node.children || node.children.length === 0) {
-      return 1;
+  // Generate a new tree using the current grammar
+  const generateTree = useCallback(() => {
+    if (!grammar || !grammar.productions || grammar.productions.length === 0) {
+      return;
     }
-    return node.children.reduce((sum, child) => sum + countLeafNodes(child), 0);
-  };
+    
+    // Generate a random derivation tree
+    const maxDepth = 3;
+    const rootNode = getRandomDerivation(grammar, grammar.startSymbol, maxDepth);
+    
+    renderTree(rootNode);
+  }, [grammar, renderTree]);
   
   useEffect(() => {
     generateTree();
     
     // Handle window resize
     const handleResize = () => {
-      if (svgRef.current) {
+      if (svgRef.current && svgRef.current.__data__) {
         renderTree(svgRef.current.__data__);
       }
     };
@@ -216,7 +219,7 @@ function DerivationTree({ grammar }) {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [grammar]);
+  }, [grammar, generateTree, renderTree]);
   
   return (
     <TreeContainer ref={containerRef}>

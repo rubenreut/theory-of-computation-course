@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useSettings } from '../context/SettingsContext';
 
@@ -289,22 +289,23 @@ const AdvancedIcon = () => (
   </svg>
 );
 
-const WordCountBlock = styled.div`
-  background-color: var(--background-color);
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  display: inline-flex;
-  align-items: center;
-  margin-top: var(--spacing-sm);
-  font-size: 0.9em;
-  color: var(--text-secondary);
-  
-  span {
-    font-weight: 600;
-    margin-left: 4px;
-    color: var(--text-color);
-  }
-`;
+// Commented out to fix unused variable warning
+// const WordCountDisplay = styled.div`
+//   background-color: var(--background-color);
+//   border-radius: var(--border-radius-sm);
+//   padding: var(--spacing-sm) var(--spacing-md);
+//   display: inline-flex;
+//   align-items: center;
+//   margin-top: var(--spacing-sm);
+//   font-size: 0.9em;
+//   color: var(--text-secondary);
+//   
+//   span {
+//     font-weight: 600;
+//     margin-left: 4px;
+//     color: var(--text-color);
+//   }
+// `;
 
 const Settings = () => {
   const { 

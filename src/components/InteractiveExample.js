@@ -231,7 +231,9 @@ function InteractiveExample({
   return (
     <ExampleContainer>
       <ExampleTitle>
-        <TitleIcon>🔍</TitleIcon>
+        <TitleIcon>
+          <span role="img" aria-label="Magnifying glass">🔍</span>
+        </TitleIcon>
         {title}
       </ExampleTitle>
       

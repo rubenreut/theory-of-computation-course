@@ -1,122 +1,219 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const EditorContainer = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--surface-color);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 30px var(--shadow-color);
+  border: 2px solid var(--border-color);
 `;
 
 const Title = styled.h2`
   margin-top: 0;
-  color: #333;
+  color: var(--text-color);
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--spacing-md);
+`;
+
+const HistoryControls = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-md);
+`;
+
+const HistoryButton = styled.button`
+  padding: 12px 20px;
+  background-color: ${props => props.disabled ? '#f0f0f0' : 'var(--surface-color)'};
+  color: ${props => props.disabled ? '#888' : 'var(--text-color)'};
+  border: 2px solid ${props => props.disabled ? '#e0e0e0' : 'var(--border-color)'};
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  margin-left: var(--spacing-sm);
+  opacity: ${props => props.disabled ? 0.6 : 1};
+  
+  &:hover:not(:disabled) {
+    background-color: ${props => props.disabled ? '#f0f0f0' : 'var(--background-color)'};
+    transform: translateY(-2px);
+  }
+  
+  transition: all 0.2s ease;
+  
+  svg {
+    margin-right: 8px;
+  }
 `;
 
 const SymbolSection = styled.div`
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  background-color: #fafafa;
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--background-color);
 `;
 
 const SymbolLabel = styled.label`
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: var(--spacing-sm);
   font-weight: bold;
-  color: #333;
+  font-size: var(--font-size-lg);
+  color: var(--text-color);
 `;
 
 const GrammarNote = styled.div`
-  margin: 10px 0;
-  padding: 10px;
-  background-color: #fff3e0;
-  border-left: 4px solid #ff9800;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-md);
+  background-color: rgba(255, 152, 0, 0.1);
+  border-left: 6px solid var(--highlight-color);
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
 `;
 
 const SymbolInput = styled.input`
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-lg);
 `;
 
 const ProductionList = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-xl);
 `;
 
 const ProductionItem = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-md);
 `;
 
 const ProductionFrom = styled.input`
-  width: 50px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-right: 10px;
+  width: 80px;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  margin-right: var(--spacing-md);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
 `;
 
 const Arrow = styled.span`
-  margin: 0 10px;
+  margin: 0 var(--spacing-md);
+  font-size: var(--font-size-xl);
+  font-weight: bold;
 `;
 
 const ProductionTo = styled.input`
   flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-lg);
 `;
 
 const Button = styled.button`
-  padding: 8px 15px;
-  background-color: #4CAF50;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  margin-right: 10px;
+  margin-right: var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-weight: 600;
   
   &:hover {
-    background-color: #45a049;
+    background-color: #0062c9;
+    transform: translateY(-2px);
   }
+  
+  transition: all 0.2s ease;
 `;
 
 const RemoveButton = styled.button`
-  background-color: #f44336;
+  background-color: var(--danger-color);
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  margin-left: 10px;
+  border-radius: var(--border-radius-md);
+  padding: 12px 20px;
+  margin-left: var(--spacing-md);
   cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
   
   &:hover {
     background-color: #d32f2f;
+    transform: translateY(-2px);
   }
+  
+  transition: all 0.2s ease;
 `;
 
 const StartSymbolSection = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-xl);
 `;
 
 const Select = styled.select`
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: var(--spacing-md);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
   width: 100%;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  background-color: var(--surface-color);
+  
+  option {
+    padding: var(--spacing-sm);
+  }
 `;
 
 function GrammarEditor({ grammar, setGrammar }) {
   const [nonTerminalInput, setNonTerminalInput] = useState('');
   const [terminalInput, setTerminalInput] = useState('');
   const [newProduction, setNewProduction] = useState({ from: '', to: '' });
+  
+  // Add history functionality
+  const [history, setHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  
+  // Track grammar changes in history
+  useEffect(() => {
+    if (grammar && (!history.length || JSON.stringify(grammar) !== JSON.stringify(history[historyIndex]))) {
+      // Remove any future history if we're not at the end
+      const newHistory = history.slice(0, historyIndex + 1);
+      
+      // Add current grammar to history
+      newHistory.push(JSON.parse(JSON.stringify(grammar)));
+      
+      // Limit history size (optional)
+      if (newHistory.length > 50) {
+        newHistory.shift();
+      }
+      
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+    }
+  }, [grammar, history, historyIndex]);
+  
+  // Undo function
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1);
+      setGrammar(JSON.parse(JSON.stringify(history[historyIndex - 1])));
+    }
+  };
+  
+  // Redo function
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(historyIndex + 1);
+      setGrammar(JSON.parse(JSON.stringify(history[historyIndex + 1])));
+    }
+  };
 
   const handleAddNonTerminal = () => {
     if (nonTerminalInput && !grammar.nonTerminals.includes(nonTerminalInput)) {
@@ -167,6 +264,15 @@ function GrammarEditor({ grammar, setGrammar }) {
   return (
     <EditorContainer>
       <Title>Grammar Editor</Title>
+      
+      <HistoryControls>
+        <HistoryButton onClick={handleUndo} disabled={historyIndex <= 0}>
+          ↩ Undo
+        </HistoryButton>
+        <HistoryButton onClick={handleRedo} disabled={historyIndex >= history.length - 1}>
+          Redo ↪
+        </HistoryButton>
+      </HistoryControls>
       
       <GrammarNote>
         A context-free grammar consists of non-terminals (variables), terminals (actual symbols in strings),
