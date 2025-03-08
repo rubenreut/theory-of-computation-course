@@ -13,7 +13,7 @@ import DFATransitions from '../../components/automata/dfa/DFATransitions';
 // Import hooks and models
 import useAutomatonState from '../../hooks/automata/useAutomatonState';
 import useSimulation from '../../hooks/useSimulation';
-import { DFAModel } from '../../utils/automata/AutomatonModel';
+// DFA model is imported through useAutomatonState hook
 
 // Additional styled components
 const SimulationContainer = styled.div`

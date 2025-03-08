@@ -13,7 +13,7 @@ import NFATransitions from '../../components/automata/nfa/NFATransitions';
 // Import hooks and models
 import useAutomatonState from '../../hooks/automata/useAutomatonState';
 import useSimulation from '../../hooks/useSimulation';
-import { NFAModel } from '../../utils/automata/AutomatonModel';
+// NFA model is imported through useAutomatonState hook
 
 // Additional styled components
 const SimulationContainer = styled.div`
