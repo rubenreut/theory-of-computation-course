@@ -1,28 +1,40 @@
-# Context-Free Grammars Learning Application
+# Theory of Computation
 
-A comprehensive interactive web application for learning and experimenting with context-free grammars (CFGs).
+A comprehensive interactive web application for learning and experimenting with theoretical computer science concepts, including Context-Free Grammars (CFGs), Deterministic Finite Automata (DFA), and Non-deterministic Finite Automata (NFA).
 
 ## Features
 
-### Interactive Grammar Editor
-- Create and edit context-free grammars
-- Define non-terminals, terminals, production rules, and start symbol
-- Real-time visualization of derivation trees
+### Context-Free Grammars Module
+- **Interactive Grammar Editor**
+  - Create and edit context-free grammars
+  - Define non-terminals, terminals, production rules, and start symbol
+  - Real-time visualization of derivation trees
+- **Parsing Visualizer**
+  - CYK parsing algorithm implementation
+  - Step-by-step visualization of parsing process
+  - Test strings for membership in your grammar's language
 
-### Parsing Visualizer
-- CYK parsing algorithm implementation
-- Step-by-step visualization of parsing process
-- Test strings for membership in your grammar's language
+### Automata Module
+- **DFA Editor and Simulator**
+  - Create and edit deterministic finite automata
+  - Interactive state diagram with drag-and-drop interface
+  - Step-by-step simulation with visual transitions
+  - Test strings for acceptance by the automaton
+- **NFA Editor and Simulator**
+  - Create and edit non-deterministic finite automata
+  - Visual representation of multiple possible paths
+  - Concurrent state transitions simulation
+  - String testing with detailed explanation
 
 ### Comprehensive Learning Resources
-- Detailed explanations of all CFG concepts
+- Detailed explanations of theoretical computer science concepts
 - Interactive tooltips that define technical terms
 - Tabbed interface with multiple learning resources:
-  - Comprehensive written content covering 40+ CFG topics
+  - Comprehensive written content covering 40+ topics
   - Complete glossary with 25+ technical terms
   - Interactive exercises with immediate feedback
   - Visual comparisons of related concepts
-  - Downloadable cheat sheet for quick reference
+  - Downloadable cheat sheets for quick reference
 
 ## Educational Components
 
@@ -33,18 +45,20 @@ A comprehensive interactive web application for learning and experimenting with 
 - Categorized for easier learning
 
 ### Interactive Exercises
-- Practice identifying grammar components
-- Step through derivations
-- Test membership in context-free languages
+- Practice identifying grammar components and automata elements
+- Step through derivations and automata simulations
+- Test membership in context-free languages and regular languages
 - Convert grammars to normal forms
-- Calculate FIRST and FOLLOW sets
+- Understand state transitions and acceptance conditions
 
 ### Visual Comparisons
 - CFG vs Regular Grammar
+- DFA vs NFA
 - Leftmost vs Rightmost Derivation
 - Chomsky Normal Form vs Greibach Normal Form
 - Top-Down vs Bottom-Up Parsing
-- Context-Free vs Non-Context-Free Languages
+- Context-Free vs Regular Languages
+- Deterministic vs Non-deterministic Computation
 
 ### Tooltips
 - Hover over technical terms for quick definitions
