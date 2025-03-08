@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // Animations
@@ -95,8 +95,20 @@ export const ResetZoomButton = styled(ZoomButton)`
   padding: var(--spacing-md);
 `;
 
-// Main component
-const AutomataCanvas = ({
+/**
+ * AutomataCanvasBase component
+ * 
+ * Canvas component for visualizing automata with performance optimizations.
+ * 
+ * @param {Object} props Component props
+ * @param {Function} props.initRef Function to initialize the canvas
+ * @param {Object} props.canvasManager Canvas manager instance
+ * @param {Function} props.renderFunction Function to render the automaton
+ * @param {boolean} props.isLoading Whether the canvas is loading
+ * @param {string} props.variant The variant of the automaton ('dfa' or 'nfa')
+ * @param {string} props.loadingMessage Loading message to display
+ */
+const AutomataCanvasBase = ({
   canvasManager,
   initRef,
   renderFunction,
@@ -107,52 +119,71 @@ const AutomataCanvas = ({
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
-
-  // Initialize canvas
-  useEffect(() => {
+  const resizeTimeoutRef = useRef(null);
+  
+  // Initialize canvas with proper size
+  const initializeCanvas = useCallback(() => {
     if (!canvasRef.current || !containerRef.current) return;
     
-    // Only initialize once
-    if (!isInitialized) {
-      const container = containerRef.current;
-      const canvas = canvasRef.current;
-      const rect = container.getBoundingClientRect();
-      
-      // Set canvas dimensions
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      
-      // Initialize canvas manager if provided
-      if (initRef) {
-        initRef(canvas);
-      }
-      
-      setIsInitialized(true);
+    const container = containerRef.current;
+    const canvas = canvasRef.current;
+    const rect = container.getBoundingClientRect();
+    
+    // Set canvas dimensions
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    
+    // Initialize canvas manager if provided
+    if (initRef) {
+      initRef(canvas);
     }
     
-    // Render initial state
-    if (renderFunction) {
-      renderFunction();
-    }
-    
-    // Handle cleanup
-    return () => {
-      // Any cleanup needed for the canvas
-    };
-  }, [renderFunction, isInitialized, initRef]);
+    setIsInitialized(true);
+  }, [initRef]);
 
-  // Handle window resize
+  // Initialize canvas on mount
+  useEffect(() => {
+    initializeCanvas();
+    
+    // Cleanup
+    return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+    };
+  }, [initializeCanvas]);
+  
+  // Handle window resize efficiently with debouncing
   useEffect(() => {
     const handleResize = () => {
-      setIsInitialized(false);
+      // Clear any existing timeout to debounce the resize
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      
+      // Set up a new timeout for 100ms
+      resizeTimeoutRef.current = setTimeout(() => {
+        setIsInitialized(false);
+        initializeCanvas();
+      }, 150);
     };
     
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
     };
-  }, []);
-
+  }, [initializeCanvas]);
+  
+  // Render when initialized or when renderFunction changes
+  useEffect(() => {
+    if (isInitialized && renderFunction) {
+      renderFunction();
+    }
+  }, [isInitialized, renderFunction]);
+  
   // Set up event handlers for pan/zoom
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current || !canvasManager) return;
@@ -166,7 +197,8 @@ const AutomataCanvas = ({
     
     const handleMouseMove = (e) => {
       if (canvasManager.handleMouseMove(e) && renderFunction) {
-        renderFunction();
+        // Use requestAnimationFrame for smoother panning
+        requestAnimationFrame(renderFunction);
       }
     };
     
@@ -192,28 +224,34 @@ const AutomataCanvas = ({
       container.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [canvasManager, renderFunction]);
-
+  
   // Handle zoom controls
-  const handleZoomIn = () => {
+  const handleZoomIn = useCallback(() => {
     if (canvasManager) {
       canvasManager.zoomIn();
-      if (renderFunction) renderFunction();
+      if (renderFunction) {
+        requestAnimationFrame(renderFunction);
+      }
     }
-  };
+  }, [canvasManager, renderFunction]);
   
-  const handleZoomOut = () => {
+  const handleZoomOut = useCallback(() => {
     if (canvasManager) {
       canvasManager.zoomOut();
-      if (renderFunction) renderFunction();
+      if (renderFunction) {
+        requestAnimationFrame(renderFunction);
+      }
     }
-  };
+  }, [canvasManager, renderFunction]);
   
-  const handleResetZoom = () => {
+  const handleResetZoom = useCallback(() => {
     if (canvasManager) {
       canvasManager.resetZoom();
-      if (renderFunction) renderFunction();
+      if (renderFunction) {
+        requestAnimationFrame(renderFunction);
+      }
     }
-  };
+  }, [canvasManager, renderFunction]);
 
   return (
     <CanvasContainer ref={containerRef}>
@@ -240,5 +278,36 @@ const AutomataCanvas = ({
     </CanvasContainer>
   );
 };
+
+// Memoize the component to prevent unnecessary re-renders
+const AutomataCanvas = memo(AutomataCanvasBase, (prevProps, nextProps) => {
+  // Always re-render if loading state changes
+  if (prevProps.isLoading !== nextProps.isLoading) {
+    return false;
+  }
+  
+  // Always re-render if canvas manager changes
+  if (prevProps.canvasManager !== nextProps.canvasManager) {
+    return false;
+  }
+  
+  // Always re-render if initRef changes
+  if (prevProps.initRef !== nextProps.initRef) {
+    return false;
+  }
+  
+  // Always re-render if variant changes
+  if (prevProps.variant !== nextProps.variant) {
+    return false;
+  }
+  
+  // If the render function changes, we should re-render
+  if (prevProps.renderFunction !== nextProps.renderFunction) {
+    return false;
+  }
+  
+  // By default, don't re-render
+  return true;
+});
 
 export default AutomataCanvas;

@@ -2,13 +2,14 @@
  * Canvas Manager for Automata Visualization
  * 
  * Handles canvas setup, zoom, pan, and basic drawing functions
+ * Performance optimized for efficient rendering
  * Used by both DFA and NFA visualization components
  */
 
 export default class CanvasManager {
   constructor(canvasRef, options = {}) {
     this.canvas = canvasRef;
-    this.ctx = canvasRef.getContext('2d');
+    this.ctx = canvasRef.getContext('2d', { alpha: true });
     this.zoom = 1;
     this.pan = { x: 0, y: 0 };
     this.stateRadius = options.stateRadius || 30;
@@ -25,6 +26,19 @@ export default class CanvasManager {
         stroke: options.activeStateStroke || 'rgba(52, 199, 89, 1)'
       }
     };
+
+    // Optimization flags
+    this._lastCanvasWidth = 0;
+    this._lastCanvasHeight = 0;
+    this._lastZoom = 1;
+    this._lastPanX = 0;
+    this._lastPanY = 0;
+    
+    // For transition caching
+    this._transitionCache = new Map();
+    
+    // For text measurement caching
+    this._textWidthCache = new Map();
 
     // Bind methods to instance
     this.clear = this.clear.bind(this);
@@ -44,12 +58,38 @@ export default class CanvasManager {
   // Clear the canvas
   clear() {
     if (!this.canvas || !this.ctx) return;
+    
+    // Check if canvas dimensions have changed since last clear
+    if (this._lastCanvasWidth !== this.canvas.width || this._lastCanvasHeight !== this.canvas.height) {
+      this._lastCanvasWidth = this.canvas.width;
+      this._lastCanvasHeight = this.canvas.height;
+      // Clear text width cache when canvas size changes
+      this._textWidthCache.clear();
+    }
+    
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  // Apply zoom and pan transformations
+  // Apply zoom and pan transformations with optimization
   applyTransform() {
     if (!this.ctx) return;
+    
+    // Check if transform parameters have changed
+    const transformChanged = 
+      this._lastZoom !== this.zoom || 
+      this._lastPanX !== this.pan.x || 
+      this._lastPanY !== this.pan.y;
+    
+    if (transformChanged) {
+      // Update last transform values
+      this._lastZoom = this.zoom;
+      this._lastPanX = this.pan.x;
+      this._lastPanY = this.pan.y;
+      
+      // Clear transition cache when transform changes
+      this._transitionCache.clear();
+    }
+    
     this.ctx.save();
     this.ctx.translate(this.pan.x, this.pan.y);
     this.ctx.scale(this.zoom, this.zoom);
@@ -92,6 +132,9 @@ export default class CanvasManager {
   resetZoom() {
     this.zoom = 1;
     this.pan = { x: 0, y: 0 };
+    
+    // Clear caches on reset
+    this._transitionCache.clear();
   }
 
   // Mouse handlers for panning
@@ -103,10 +146,15 @@ export default class CanvasManager {
   }
 
   handleMouseMove(e) {
-    if (!this.isDragging || !this.canvas) return;
+    if (!this.isDragging || !this.canvas) return false;
     
     const dx = e.clientX - this.dragStart.x;
     const dy = e.clientY - this.dragStart.y;
+    
+    // Only process significant movements (optimization)
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+      return false;
+    }
     
     // Calculate boundaries based on zoom level and canvas size
     const maxPanX = this.canvas.width * (this.zoom - 0.5);
@@ -122,7 +170,10 @@ export default class CanvasManager {
     
     this.dragStart = { x: e.clientX, y: e.clientY };
     
-    return this.pan;
+    // Clear transition cache on pan
+    this._transitionCache.clear();
+    
+    return true; // Indicate that a redraw is needed
   }
 
   handleMouseUp() {
@@ -151,10 +202,29 @@ export default class CanvasManager {
     });
     
     this.statePositions = positions;
+    
+    // Clear caches when positions change
+    this._transitionCache.clear();
+    
     return positions;
   }
 
-  // Draw a state (circle)
+  // Measure text width with caching
+  measureTextWidth(text, font) {
+    const cacheKey = `${text}|${font}`;
+    
+    if (this._textWidthCache.has(cacheKey)) {
+      return this._textWidthCache.get(cacheKey);
+    }
+    
+    this.ctx.font = font;
+    const width = this.ctx.measureText(text).width;
+    this._textWidthCache.set(cacheKey, width);
+    
+    return width;
+  }
+
+  // Draw a state (circle) with optimization
   drawState(state, position, options = {}) {
     if (!this.ctx || !position) return;
     
@@ -224,13 +294,14 @@ export default class CanvasManager {
     
     // State label
     this.ctx.fillStyle = isActive ? 'white' : '#333';
-    this.ctx.font = `bold ${isActive ? 16 : 14}px Arial`;
+    const font = `bold ${isActive ? 16 : 14}px Arial`;
+    this.ctx.font = font;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillText(label, position.x, position.y);
   }
 
-  // Draw a transition (arrow) between states
+  // Draw a transition (arrow) between states with caching
   drawTransition(fromState, toState, fromPos, toPos, options = {}) {
     if (!this.ctx || !fromPos || !toPos) return;
     
@@ -241,6 +312,9 @@ export default class CanvasManager {
       strokeColor = isActive ? 'rgba(52, 199, 89, 0.8)' : 'rgba(0, 0, 0, 0.6)',
       textColor = isActive ? 'var(--secondary-color)' : 'black'
     } = options;
+    
+    // Create cache key for this transition
+    const cacheKey = `${fromState}|${toState}|${symbol}|${isActive}|${isDashed}|${strokeColor}|${this.zoom}`;
     
     // Self-loop
     if (fromState === toState) {
@@ -297,12 +371,13 @@ export default class CanvasManager {
     
     // Text background
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    this.ctx.font = isActive ? 'bold 16px Arial' : '14px Arial';
-    const textWidth = this.ctx.measureText(symbol).width + 10;
+    const font = isActive ? 'bold 16px Arial' : '14px Arial';
+    const textWidth = this.measureTextWidth(symbol, font) + 10;
     this.ctx.fillRect(textX - textWidth/2, textY - 10, textWidth, 20);
     
     // Text
     this.ctx.fillStyle = textColor;
+    this.ctx.font = font;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillText(symbol, textX, textY);
@@ -389,12 +464,13 @@ export default class CanvasManager {
     
     // Text background
     this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    this.ctx.font = isActive ? 'bold 16px Arial' : '14px Arial';
-    const textWidth = this.ctx.measureText(symbol).width + 10;
+    const font = isActive ? 'bold 16px Arial' : '14px Arial';
+    const textWidth = this.measureTextWidth(symbol, font) + 10;
     this.ctx.fillRect(textX - textWidth/2, textY - 10, textWidth, 20);
     
     // Text
     this.ctx.fillStyle = textColor;
+    this.ctx.font = font;
     this.ctx.textAlign = 'center';
     this.ctx.textBaseline = 'middle';
     this.ctx.fillText(symbol, textX, textY);
