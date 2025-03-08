@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
+import { InputContainer, TestInput } from './FormComponents';
 
 // Animations
 const pulse = keyframes`
@@ -379,9 +380,9 @@ const SimulationControls = ({
         <SpeedLabel>Speed:</SpeedLabel>
         <SpeedSlider 
           type="range" 
-          min="100" 
-          max="1000" 
-          step="100" 
+          min="50" 
+          max="500" 
+          step="50" 
           value={simulationState.speed}
           onChange={handleSpeedChange}
           variant={variant}

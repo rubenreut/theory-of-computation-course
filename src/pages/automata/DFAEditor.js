@@ -156,7 +156,7 @@ const DFAEditor = () => {
     computeNextState,
     isAcceptingState,
     renderCallback: () => renderDFA(),
-    defaultSpeed: 500
+    defaultSpeed: 200
   });
   
   // ===== CANVAS RENDERING =====

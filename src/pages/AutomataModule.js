@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 // Import sub-pages
 import AutomataIntroduction from './automata/AutomataIntroduction';
-// Temporarily removed: import DFAEditor from './automata/DFAEditor';
-// Temporarily removed: import NFAEditor from './automata/NFAEditor';
+import DFAEditor from './automata/DFAEditor';
+import NFAEditor from './automata/NFAEditor';
 import AutomataExamples from './automata/AutomataExamples';
 import AutomataComparisons from './automata/AutomataComparisons';
 import AutomataCheatSheet from './automata/AutomataCheatSheet';
@@ -160,8 +160,8 @@ const AutomataModule = () => {
         <ContentContainer>
           <Routes>
             <Route path="/introduction" element={<AutomataIntroduction />} />
-            <Route path="/dfa" element={<div>DFA Editor under refactoring</div>} />
-            <Route path="/nfa" element={<div>NFA Editor under refactoring</div>} />
+            <Route path="/dfa" element={<DFAEditor />} />
+            <Route path="/nfa" element={<NFAEditor />} />
             <Route path="/examples" element={<AutomataExamples />} />
             <Route path="/comparisons" element={<AutomataComparisons />} />
             <Route path="/cheatsheet" element={<AutomataCheatSheet />} />

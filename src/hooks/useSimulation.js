@@ -20,7 +20,7 @@ const useSimulation = (options = {}) => {
     isAcceptingState = null,
     areAcceptingStates = null, // For NFA
     renderCallback = null,
-    defaultSpeed = 500
+    defaultSpeed = 200
   } = options;
 
   // Animation reference for cleanup
@@ -147,6 +147,7 @@ const useSimulation = (options = {}) => {
     
     // Continue simulation
     runSimulationStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Stop simulation - complete reset of state
@@ -300,6 +301,7 @@ const useSimulation = (options = {}) => {
         path: newPath
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     computeNextState, 
     isAcceptingState, 
@@ -414,6 +416,7 @@ const useSimulation = (options = {}) => {
         path: newPath
       };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     computeNextStates, 
     areAcceptingStates, 

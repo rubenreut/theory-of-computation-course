@@ -234,7 +234,7 @@ const NFAEditor = () => {
     areAcceptingStates,
     computeEpsilonClosure,
     renderCallback: () => renderNFA(),
-    defaultSpeed: 500
+    defaultSpeed: 200
   });
   
   // ===== CANVAS RENDERING =====
